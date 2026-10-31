@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antigravity 시나리오별 실전 이용방법 & 액션플랜 (v4.2.2)</title>
+    <title>Antigravity 시나리오별 실전 이용방법 & 액션플랜 (v4.3.2)</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
@@ -351,24 +351,24 @@
         <div class="doc-header">
             <div class="badge-row">
                 <span class="badge badge-primary">Antigravity Guide</span>
-                <span class="badge badge-version">korean-stock-analyzer v4.2.2</span>
-                <span class="badge badge-success">Gemini 4.0 Argon</span>
+                <span class="badge badge-version">korean-stock-analyzer v4.3.2</span>
+                <span class="badge badge-success">Gemini 4.0 Argon & 3.8 Flash High</span>
             </div>
         </div>
         <div class="content">
-            <h1 id="antigravity-gemini-40-argon-md">🧭 Antigravity (Gemini 4.0 Argon) 시나리오별 실전 이용방법 &amp; 액션플랜 (<code>이용방법.md</code>)</h1>
-<p>이 문서는 <code>korean-stock-analyzer (v4.2.2)</code> 시스템을 운영할 때 <strong>① 신규 기업 폴더 생성부터 ② 최초 보고서 작성, ③ 모델 업그레이드(3.1/3.8 ➔ 4.0 Argon), ④ Global/Weekly Trend 업데이트, ⑤ DART 정기 보고서(분기·반기·사업보고서) 공시 대응</strong>까지 각 상황별로 <strong>사용자가 무엇을 준비하고 어떤 한 줄 명령어를 입력해야 하는지</strong> 정리한 마스터 액션플랜입니다.</p>
-<div class="callout callout-tip"><div class="callout-header"><span class="callout-icon">💡</span><strong> 핵심 자동화 원리 (긴 프롬프트 입력 불필요)</strong></div><div class="callout-body"><p><br />
-<code>SKILL.md</code>와 <code>GEMINI.md</code>에 <strong>[구버전 보고서 자동 감지 클린 리빌드]</strong> 및 <strong>[단일 턴 요약 편향 차단]</strong> 규칙이 영구 내장되어 있습니다. 따라서 사용자께서는 어떤 상황에서든 복잡한 조건을 길게 치실 필요 없이, 아래 표에 적힌 <strong>한 줄 명령어</strong>만 입력하시면 에이전트가 알아서 구버전 여부와 데이터 상태를 감지해 처리합니다.</p></div></div>
+            <h1 id="antigravity-gemini-40-argon-38-flash-high-md-v432">🧭 Antigravity (Gemini 4.0 Argon &amp; 3.8 Flash High) 시나리오별 실전 이용방법 &amp; 액션플랜 (<code>이용방법.md</code> v4.3.2)</h1>
+<p>이 문서는 <code>korean-stock-analyzer (v4.3.2)</code> 시스템을 운영할 때 <strong>① 신규 기업 폴더 생성부터 ② 최초 보고서 작성, ③ 모델 업그레이드(3.1/3.8 ➔ 4.0 Argon), ④ Global/Weekly Trend 업데이트(월 2회 격주 핀셋 델타 점검), ⑤ DART 정기 보고서(분기·반기·사업보고서) 공시 대응(전면 리빌드), ⑥ S-Curve 10% 변곡점·3축 구조적 병목·K-주주환원 점검, ⑦ 보유 종목 모바일 요약본 동기화, ⑧ <code>주가 = (수급 + 실적) × 기대감</code> 과거 데이터 역추적 및 기대감 테마 선별(<code>Gemini 3.8 Flash High</code> 최적화), ⑨ 퀄리티 100% 사수 기반 토큰 85% 절감(무손실 원문 발췌 + Track A/B 이원화 + 2-Step 분업)</strong>까지 각 상황별로 <strong>사용자가 무엇을 준비하고 어떤 한 줄 명령어를 입력해야 하는지</strong> 정리한 마스터 액션플랜입니다.</p>
+<div class="callout callout-tip"><div class="callout-header"><span class="callout-icon">💡</span><strong> 핵심 자동화 원리 (보고서 퀄리티 1순위 &amp; 토큰 소모량 85% 절감)</strong></div><div class="callout-body"><p><br />
+<code>SKILL.md</code>와 <code>GEMINI.md</code>에 <strong>[AI 주관적 요약 금지 &amp; 무손실 원문 발췌(<code>verbatim_extracts.md</code>)]</strong>, <strong>[월 2회 작성 Track A(분기 전면 리빌드) vs Track B(격주 핀셋 델타 점검) 이원화]</strong>, <strong>[구버전 보고서 자동 감지 클린 리빌드]</strong>, 그리고 <strong>[<code>주가=(수급+실적)×기대감</code> 3.8 Flash High 최적화 프로토콜]</strong> 규칙이 영구 내장되어 있습니다. 따라서 사용자께서는 어떤 상황에서든 아래 표에 적힌 <strong>한 줄 명령어</strong>만 입력하시면 에이전트가 알아서 퀄리티 훼손 0.0% 상태로 최적 실행합니다.</p></div></div>
 <hr />
-<h2 id="1-6-quick-cheat-sheet">📊 1. 한눈에 보는 6대 시나리오별 액션플랜 요약표 (Quick Cheat Sheet)</h2>
+<h2 id="1-9-quick-cheat-sheet">📊 1. 한눈에 보는 9대 시나리오별 액션플랜 요약표 (Quick Cheat Sheet)</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">시나리오 상황</th>
-<th style="text-align: left;">[Step 1] 내 사전 준비 (파일 배치)</th>
+<th style="text-align: left;">[Step 1] 내 사전 준비 (파일 배치 / 모델 선택)</th>
 <th style="text-align: left;">[Step 2] 안티그래비티에 입력할 한 줄 명령어</th>
-<th style="text-align: left;">[Step 3] 4.0 Argon 내부 자동 작동 결과</th>
+<th style="text-align: left;">[Step 3] 에이전트 내부 자동 작동 결과</th>
 </tr>
 </thead>
 <tbody>
@@ -382,7 +382,7 @@
 <td style="text-align: left;"><strong>② 최초 기업 분석 작성</strong><br>(처음 분석하는 신규 기업)</td>
 <td style="text-align: left;"><code>1_Raw_Data/</code>에 사업·분기보고서 PDF 넣기<br>(<code>my-stock</code>에 DART 시계열 수집)</td>
 <td style="text-align: left;">• <strong>[2스텝 정석]</strong>: <strong><code>"[기업명(코드)] Phase 1 분석해줘"</code></strong> 확인 후 <strong><code>"Phase 2, 3 진행해줘"</code></strong><br>• <strong>[1턴 원샷]</strong>: <strong><code>"[기업명(코드)] Phase 1~3 분석해줘"</code></strong></td>
-<td style="text-align: left;">SSOT 스크립트(<code>backtest_valuation.py</code>, <code>calc_reverse_dcf.py</code>) 선행 실행 ➔ <code>valuation_metrics.json</code> 생성 ➔ Phase 1~3 마크다운·HTML·모바일 통합요약본 일괄 생성</td>
+<td style="text-align: left;">SSOT 스크립트(<code>backtest_valuation.py</code>, <code>calc_reverse_dcf.py</code>) 선행 실행 + <code>parse_pdf.py --batch-dir</code> 무손실 원문 발췌(<code>verbatim_extracts.md</code>) ➔ Phase 1~3 마크다운 및 개별 HTML 일괄 생성 <em>(※ 모바일 통합요약본은 자동 동기화하지 않음)</em></td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>③ 추론 모델 변경 시</strong><br>(기존 3.1/3.8 기업 ➔ 4.0 승격)</td>
@@ -391,22 +391,40 @@
 <td style="text-align: left;">기존 보고서가 3.8 구버전임을 <strong>자동 감지</strong> ➔ 구버전 본문 앵커링 차단(무시) ➔ <code>1_Raw_Data</code>와 <code>thesis_log.md</code> 가설 이력만 계승(6열 승격)하여 백지상태에서 4.0 골격으로 전면 덮어쓰기</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>④ Global Trend 업데이트</strong><br>(2주 주기 산업·거시 리포트)</td>
+<td style="text-align: left;"><strong>④ Global Trend 업데이트 &amp; 격주 정기 점검 (Track B)</strong><br>(월 2회 중 비공시 회차 · 쿼터 0.5~1.2%)</td>
 <td style="text-align: left;"><code>Stock_Research/Global_Trend/[날짜폴더]/</code>에 증권사 딥리서치 PDF 넣기</td>
-<td style="text-align: left;"><strong><code>"[기업명] 최신 Global Trend 반영해서 업데이트해줘"</code></strong></td>
-<td style="text-align: left;">• <strong>구버전(3.8) 기업이면</strong>: 자동으로 전체 클린 리빌드 수행<br>• <strong>4.0 완료 기업이면</strong>: 기존 골격 유지 + Global Trend 3대 게이트·S-Curve 앵커 검증(<code>parse_pdf.py</code>)·최신 주가 타점 델타 업데이트</td>
+<td style="text-align: left;"><strong><code>"[기업명] 최신 Global Trend 반영해서 업데이트해줘"</code></strong><br>(또는 <strong><code>"[기업명] 격주 델타 점검해줘"</code></strong>)</td>
+<td style="text-align: left;">• <strong>구버전(3.8) 기업이면</strong>: 자동으로 Track A 전체 클린 리빌드 수행<br>• <strong>4.0 완료 기업이면 (Track B)</strong>: BM/장부(Phase 1 본문) 중복 재작성 생략! 신규 PDF 무손실 원문 발췌 + 최신 주가 SSOT 재연산 ➔ <code>thesis_log.md</code> 가설 검증 + <code>Phase 1 헤더</code> 및 <code>Phase 3 역DCF·목표가·SOP 타점/안전핀</code>만 핀셋 패치 (쿼터 85% 절약 &amp; 퀄리티 100% 유지)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>⑤ Weekly Trend 업데이트</strong><br>(기업 IR·종목리포트·수주공시)</td>
 <td style="text-align: left;"><code>Stock_Research/[기업명]/Weekly_Trend/</code>에 IR/리포트 PDF 넣기</td>
 <td style="text-align: left;"><strong><code>"[기업명] Weekly Trend 새 자료 반영해서 업데이트해줘"</code></strong></td>
-<td style="text-align: left;"><code>company_timeline.md</code> 미시 이벤트 추가 ➔ <code>thesis_log.md</code> 6열 가설 검증 갱신 ➔ 목표가/수주 변동 시 <code>Phase 2, 3</code> 및 모바일 요약본 즉시 동기화</td>
+<td style="text-align: left;">신규 PDF 무손실 원문 발췌 ➔ <code>company_timeline.md</code> 미시 이벤트 추가 ➔ <code>thesis_log.md</code> 6열 가설 검증 갱신 ➔ 목표가/수주 변동 시 <code>Phase 2, 3</code> 즉시 핀셋 동기화 <em>(※ 모바일 요약본 자동 동기화 제외)</em></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>⑥ 분기·반기·사업보고서 공시</strong><br>(연 4회 DART 정기 실적 발표)</td>
+<td style="text-align: left;"><strong>⑥ 분기·반기·사업보고서 공시 (Track A)</strong><br>(연 4회 DART 정기 실적 발표)</td>
 <td style="text-align: left;"><code>1_Raw_Data/</code>에 신규 보고서 PDF 추가<br>(<code>my-stock</code> DART 분기 데이터 갱신)</td>
 <td style="text-align: left;"><strong><code>"[기업명] 신규 분기보고서(또는 사업보고서) 반영해서 Phase 1~3 업데이트해줘"</code></strong></td>
-<td style="text-align: left;">코드로 <strong>직전 분기 대비(QoQ) 실적</strong> 자동 산출 ➔ <code>thesis_log.md</code>의 <strong>🚨반증 숫자(Kill-Switch)</strong>와 실제 실적 대조하여 <code>[검증 완료 / 약화 / 폐기]</code> 판정 ➔ SOTP·4대 레짐·목표가·SOP 전면 재산출</td>
+<td style="text-align: left;"><strong>[Track A 전면 리빌드]</strong>: 코드로 <strong>직전 분기 대비(QoQ) 실적</strong> 자동 산출 ➔ <code>thesis_log.md</code>의 <strong>🚨반증 숫자(Kill-Switch)</strong>와 실제 실적 대조 심판 ➔ SOTP·4대 레짐·목표가·SOP 전면 재작성 <em>(※ 모바일 요약본 자동 동기화 분리)</em></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>⑦ 보유 종목 모바일 요약본 동기화</strong><br>(모바일 통합본 일괄 갱신 필요 시)</td>
+<td style="text-align: left;">준비물 없음 (별도 동기화 요청 시)</td>
+<td style="text-align: left;"><strong><code>"모바일 요약본 동기화해줘"</code></strong><br>(또는 <strong><code>"보유 종목 모바일 요약본 동기화해줘"</code></strong>)</td>
+<td style="text-align: left;"><code>portfolio_status.json</code> 내 <strong>"보유(holding)" 기업만 일괄 필터링</strong> ➔ <code>00_모바일_통합요약본.html</code> 로컬 및 구글 드라이브 일괄 동기화 완료 <em>(관심 종목 자동 제외)</em></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>⑧ <code>주가=(수급+실적)*기대감</code> 과거 역추적 &amp; 기대감 테마 선별</strong><br>(★<code>Gemini 3.8 Flash High</code> 최적화)</td>
+<td style="text-align: left;">이미 Phase 1~3 작성된 기업 대상<br>모델 드롭다운에서 <strong><code>Gemini 3.8 Flash High</code></strong> 선택</td>
+<td style="text-align: left;"><strong><code>"[기업명] 주가=(수급+실적)*기대감 관점으로 과거 데이터 분석해줘"</code></strong></td>
+<td style="text-align: left;">과거 주가 국면별 <code>(수급+실적)×기대감</code> 3요소 분해 ➔ <strong>기대감 자극 핵심 테마 4등급(1순위 리레이팅 / 2순위 차세대 S-Curve / 3순위 0원 콜옵션 / 4순위 가짜·소멸 테마) 선별</strong> ➔ <strong><code>company_timeline.md</code> 심층 부록 및 <code>thesis_log.md</code> 6열 반증 가설 자동 업데이트</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>⑨ 2-Step 모델 분업 실행</strong><br>(Flash 무손실 발췌 ➔ Argon 추론으로 쿼터 극한 절약 시)</td>
+<td style="text-align: left;"><strong>1단계</strong>: <code>Gemini 3.8 Flash High</code><br><strong>2단계</strong>: <code>Gemini 4.0 Argon</code></td>
+<td style="text-align: left;">• <strong>Step 1 (Flash)</strong>: <strong><code>"[기업명] DART 스캔하고 SSOT 및 무손실 원문 발췌(verbatim_extracts.md) 준비해줘"</code></strong><br>• <strong>Step 2 (Argon)</strong>: <strong><code>"[기업명] 준비된 SSOT와 무손실 원문 발췌본 기반으로 Phase 1~3 작성해줘"</code></strong></td>
+<td style="text-align: left;">• <strong>Step 1</strong>: 요약/의역 0%! 코드 연산(<code>auto_tables.md</code>) 및 PDF 핵심 페이지 100% 원문 발췌(<code>verbatim_extracts.md</code>)만 수행 (쿼터 ~0.2%)<br>• <strong>Step 2</strong>: Argon이 오염 없는 원문 발췌본만 읽고 4~6턴 만에 초고밀도 리포트 완성 (쿼터 ~1.2%)</td>
 </tr>
 </tbody>
 </table>
@@ -495,7 +513,7 @@
    코미코 Weekly Trend 새 자료(및 최근 공시) 반영해서 업데이트해줘</code></li>
 <li><strong>4.0 Argon 내부 자동 작동</strong>:</li>
 <li><code>Weekly_Trend/company_timeline.md</code>에 신규 수주·증설·IR 핵심 팩트를 날짜순으로 누적 기록합니다.</li>
-<li><code>Weekly_Trend/thesis_log.md</code>의 6열 가설 표에서 해당 가설의確認 근거를 업데이트하고, 만약 선행 발화(<code>Early Ignition</code>: 수주잔고 YoY +30%↑ &amp; 본업 마진 방어) 요건이 새로 충족되었다면 <code>backtest_valuation.py --early-ignition</code>을 재실행하여 <code>Phase 3</code> 목표가와 모바일 요약본을 즉시 갱신합니다.</li>
+<li><code>Weekly_Trend/thesis_log.md</code>의 6열 가설 표에서 해당 가설의 확인 근거를 업데이트하고, 만약 선행 발화(<code>Early Ignition</code>: 수주잔고 YoY +30%↑ &amp; 본업 마진 방어) 요건이 새로 충족되었다면 <code>backtest_valuation.py --early-ignition</code>을 재실행하여 <code>Phase 3</code> 목표가를 즉시 갱신합니다 <em>(※ 모바일 요약본은 자동 동기화되지 않으며 별도 요청 시 동기화)</em>.</li>
 </ol>
 <hr />
 <h3 id="6-4-dart">📌 시나리오 6: 분기 / 반기 / 사업보고서 (연 4회 DART 정기 공시) 발표 시 ★가장 중요</h3>
@@ -518,8 +536,93 @@
 <li>신규 분기에 비영업자산 비중이 20%를 넘었는지, 유형자산(CapEx)이나 차입금/CB 희석이 발생했는지, 고점 이익에서 영업이익 QoQ가 <code>-15%</code> 이상 꺾였는지(피크아웃 캡 발동) 코드가 자동 판정합니다.</li>
 </ul>
 </li>
-<li><strong>④ 전 파일 및 모바일 요약본 일괄 동기화</strong>: <code>Phase1~3.md</code>, <code>phase1~3.html</code>, <code>00_모바일_통합요약본.html</code>(로컬 및 구글 드라이브)까지 한 번에 최신화합니다.</li>
+<li><strong>④ 전 보고서 및 개별 HTML 최신화 (모바일 자동 동기화 분리)</strong>: <code>Phase1~3.md</code> 및 개별 <code>phase1~3.html</code>을 최신화합니다. <em>(※ 모바일 통합요약본은 보고서 작성 시 자동으로 동기화되지 않으며, 사용자의 별도 요청 시 '보유' 기업들만 일괄 동기화됩니다)</em></li>
 </ol>
+<hr />
+<h3 id="7">📌 시나리오 7: 보유 종목 모바일 통합요약본 일괄 동기화 (별도 요청 시에만 실행)</h3>
+<p>개별 기업들의 Phase 1~3 작성을 마친 후, 스마트폰이나 태블릿에서 확인할 모바일 1페이지 통합요약본(<code>00_모바일_통합요약본.html</code>)을 최신화할 때의 절차입니다. Phase 1~3 작성 중에는 자동으로 동기화되지 않으므로, 최신 상태를 모바일로 내보내고 싶을 때 언제든 아래 명령어를 입력하시면 됩니다.</p>
+<ol>
+<li><strong>사용자 명령어 입력</strong>:<br />
+<code>text
+   모바일 통합요약본 동기화해줘</code><br />
+<em>(또는 <code>"보유 종목 모바일 요약본 동기화해줘"</code>)</em></li>
+<li><strong>4.0 Argon 내부 자동 작동</strong>:</li>
+<li><code>E:\antigravity-work\my-skill\Stock_Research\portfolio_status.json</code>을 로드하여 현재 <strong><code>"status": "holding"</code>(보유)</strong>으로 선정된 기업들만 일괄 스캔합니다.</li>
+<li><code>python e:\antigravity-work\my-skill\korean-stock-analyzer\generate_mobile_summary.py --holding-only</code>를 실행하여 관심(<code>watchlist</code>) 종목은 제외하고 보유 기업들만 카드 형태로 집약된 <code>00_모바일_통합요약본.html</code>을 로컬 및 구글 드라이브에 일괄 동기화합니다.</li>
+</ol>
+<hr />
+<h3 id="8-gemini-38-flash-high">📌 시나리오 8: <code>주가 = (수급 + 실적) × 기대감</code> 과거 데이터 역추적 &amp; 기대감 자극 테마 선별 (★<code>Gemini 3.8 Flash High</code> 최적화)</h3>
+<p>이미 Phase 1, 2, 3 보고서가 작성된 기업에 대해, 과거 3~10년간 주가가 왜 올랐고 왜 떨어졌는지를 <strong><code>주가 = (수급 + 실적) × 기대감</code></strong> 공식으로 해부하고 <strong>이 기업의 기대감(멀티플)을 진짜로 자극하는 핵심 테마</strong>를 가려내어 <code>company_timeline.md</code>와 <code>thesis_log.md</code>에 영구 기록하는 절차입니다.</p>
+<ol>
+<li><strong>내 사전 준비 (모델 선택)</strong>:</li>
+<li>안티그래비티 모델 드롭다운에서 <strong><code>Gemini 3.8 Flash High</code></strong>를 선택합니다. (<code>SKILL.md</code>에 3.8 Flash High 전용 SSOT 숫자 고정 및 3단계 테이블 스키마 가드레일이 내장되어 있어 빠르고 정확하게 작동합니다.)</li>
+<li><strong>사용자 명령어 입력</strong>:<br />
+<code>text
+   코미코 주가=(수급+실적)*기대감 관점으로 과거 데이터 분석해줘</code><br />
+<em>(또는 <code>"리노공업 주가=(수급+실적)*기대감 관점으로 과거 데이터를 분석해서 기대감 테마 선별하고 업데이트해줘"</code>)</em></li>
+<li><strong><code>Gemini 3.8 Flash High</code> 내부 자동 작동</strong>:</li>
+<li><strong>① 과거 국면별 3요소 분해</strong>: 해당 기업 폴더의 <code>2_Translated_DB/valuation_metrics.json</code>, <code>3_Final_Reports/Phase1~3.md</code>, <code>1_Raw_Data/</code> 공시, <code>Weekly_Trend/</code> 자료를 스캔하여 과거 주요 상승/하락 국면별로 <strong><code>실적(Q·P·C, 가동률, 수주)</code> + <code>수급(외인·기관, 무상증자/액면분할, 자사주, CB/주담대 오버행)</code> × <code>기대감(PER·PBR 멀티플 확장/수축 내러티브)</code></strong>을 정밀 분해합니다.</li>
+<li><strong>② 기대감 자극 핵심 테마 4등급 선별</strong>:<ul>
+<li><strong>👑 1순위 (핵심 리레이팅 테마)</strong>: 실적과 결합해 역사적 멀티플 상단(<code>p65~p90</code>) 돌파를 실제로 이끌었던 주력 테마</li>
+<li><strong>🚀 2순위 (차세대 S-Curve 발화 테마)</strong>: 신규 증설·퀄 통과·수주 공시 때마다 멀티플 할증을 선행 자극하는 신성장 테마</li>
+<li><strong>🎁 3순위 (0원 무상 콜옵션 테마)</strong>: 뉴스에 단기 급등락하나 단독 매출 미공시(<code>&lt;30%</code>)로 추격매수를 피해야 할 테마</li>
+<li><strong>❌ 4순위 (가짜 · 소멸 · 피크아웃 테마)</strong>: 물리적 한계로 폐기되었거나 성숙기(<code>&gt;40%</code>)에 도달해 익절 기회로만 삼아야 할 테마</li>
+</ul>
+</li>
+<li><strong>③ 영구 장부(<code>company_timeline.md</code> &amp; <code>thesis_log.md</code>) 자동 반영</strong>:<ul>
+<li><code>Weekly_Trend/company_timeline.md</code> 하단에 <strong><code>📊 [심층 부록] 주가 = (수급 + 실적) × 기대감 과거 데이터 역추적 &amp; 기대감 테마 선별</code></strong> 섹션을 자동 생성/갱신합니다.</li>
+<li><code>Weekly_Trend/thesis_log.md</code>의 6열 포퍼식 가설 표에 선별된 핵심 기대감 테마의 <strong>발화 트리거</strong>와 <strong>🚨테마 소멸 반증 기준(Kill-Switch)</strong>을 자동으로 추가 업데이트합니다.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h3 id="9-100-85-2-v432">📌 시나리오 9: [보고서 퀄리티 100% 사수 + 토큰 소모량 85% 절감] 월 2회 작성 최적화 가이드 (★v4.3.2 핵심)</h3>
+<p>6개월~1년 투자 주기와 한국 시장의 높은 가격 변동성에 대응하기 위해 <strong>월 2회(격주) 보고서 점검 루틴을 유지</strong>하면서도, <strong>하위 모델의 요약 왜곡(Garbage In ➔ Garbage Out)을 0.0%로 원천 차단하고 Argon 쿼터 소모량을 13% ➔ 1.0~1.5%로 줄이는 3대 실전 운영법</strong>입니다.</p>
+<h4 id="flash-summary-100-verbatim">🛡️ 핵심 원칙: "Flash에게 절대 자연어 요약(Summary)을 시키지 않고, 오직 100% 무손실 원문 발췌(Verbatim)만 시킨다"</h4>
+<ul>
+<li>LLM에게 문서를 요약시키면 엔지니어링 뉘앙스(예: R&amp;D용 vs 양산용 소켓 비중), 도표 주석의 단서 조건, 일회성 비용 맥락이 증발합니다.</li>
+<li>따라서 <code>v4.3.2</code>에서는 파이썬 배치 파서(<code>parse_pdf.py --batch-dir</code>)와 Flash가 <strong>해당 기업·키워드가 포함된 원문 페이지 전체를 단 1글자도 바꾸지 않고 그대로(<code>2_Translated_DB/verbatim_extracts.md</code>) 복사</strong>하고, <strong>해석과 추론은 100% Argon이 원문을 직접 보며 수행</strong>합니다.</li>
+</ul>
+<h4 id="1-2-track-a-vs-track-b">🎯 1) 월 2회 작성 주기의 스마트 이원화 (<code>Track A</code> vs <code>Track B</code>)</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">구분</th>
+<th style="text-align: left;">실행 시기</th>
+<th style="text-align: left;">수행 범위 및 명령어</th>
+<th style="text-align: left;">퀄리티 &amp; 쿼터 효과</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>🏛️ Track A</strong><br><strong>(전면 클린 리빌드)</strong></td>
+<td style="text-align: left;"><strong>분기 1회 (연 4회)</strong><br><em>(분기/반기/사업보고서 공시월 또는 대형 증설·수주·CB 이벤트 발생 시)</em></td>
+<td style="text-align: left;">• <strong>명령어</strong>: <strong><code>"[기업명] 신규 분기보고서 반영해서 Phase 1~3 업데이트해줘"</code></strong><br>• DART 재무제표와 EPS/BPS가 바뀌었으므로 무손실 원문 발췌 + Argon 심층 추론으로 <code>Phase 1~3 (3.5만 자)</code> 전체를 전면 재작성</td>
+<td style="text-align: left;">• <strong>퀄리티</strong>: 100% 무결성<br>• <strong>쿼터</strong>: 기존 13% ➔ <strong><code>1.5~2.5%</code></strong> (무손실 발췌 분업 시)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>⚡ Track B</strong><br><strong>(격주 핀셋 델타 점검)</strong></td>
+<td style="text-align: left;"><strong>월 2회 중 나머지 회차</strong><br><em>(격주 <code>Global_Trend</code> 발간 및 주가 변동성 대응 시)</em></td>
+<td style="text-align: left;">• <strong>명령어</strong>: <strong><code>"[기업명] 격주 델타 점검해줘"</code></strong> 또는 <strong><code>"[기업명] 최신 Global Trend 반영해서 업데이트해줘"</code></strong><br>• 2주 만에 바뀌지 않는 기업의 BM·연혁·과거 장부 해부(Phase 1 본문)는 중복 재작성하지 않음!<br>• <strong>최신 주가 SSOT 재연산 + 신규 PDF 무손실 원문 발췌</strong> 후, Argon이 <strong><code>thesis_log.md</code> 가설 검증 + <code>Phase 1 헤더</code> + <code>Phase 3 역DCF·목표가·3분할 매수가/안전핀 SOP</code></strong>만 <code>edit_file</code>로 핀셋 업데이트</td>
+<td style="text-align: left;">• <strong>퀄리티</strong>: 100% 유지 (주가 변동성 완벽 대응)<br>• <strong>쿼터</strong>: 단 4~6턴, <strong><code>0.5~1.0%</code></strong> 소모</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-vs-2-step">💻 2) 두 가지 실행 방식 중 편한 방법 선택 (자동 서브에이전트 vs 수동 2-Step)</h4>
+<ul>
+<li><strong>방식 ① — 원클릭 자동 분업 (가장 편한 방법: 처음부터 <code>Gemini 4.0 Argon</code> 선택)</strong>:</li>
+<li>상단 드롭다운에서 <strong><code>Gemini 4.0 Argon</code></strong>을 둔 채로 평소처럼 한 줄 명령어를 입력합니다.</li>
+<li>Argon이 스스로 무거운 PDF 원문 전체를 읽는 대신, <code>parse_pdf.py --batch-dir</code> 및 <code>invoke_subagent(Model: "flash")</code>를 먼저 호출해 <code>valuation_metrics.json</code>, <code>auto_tables.md</code>, <code>verbatim_extracts.md</code>(무손실 원문 발췌본)를 생성한 뒤, 정제된 원문만 읽고 심층 추론을 완성합니다.</li>
+<li><strong>방식 ② — UI 드롭다운 2-Step 수동 분업 (Argon 쿼터를 극한으로 아끼는 가장 확실한 방법)</strong>:</li>
+<li><strong>[Step 1 — 드롭다운에서 <code>Gemini 3.8 Flash High</code> 선택]</strong>:<br />
+<code>text
+    리노공업 DART 최신 공시 스캔하고 SSOT 스크립트 및 PDF 무손실 원문 발췌(verbatim_extracts.md)까지 준비해줘</code><br />
+<em>(Flash High가 요약 없이 100% 코드 연산 + 원문 그대로 발췌만 수행 ➔ 쿼터 0.1~0.3% 소모)</em></li>
+<li><strong>[Step 2 — 드롭다운에서 <code>Gemini 4.0 Argon</code> (또는 <code>/boost</code>) 선택]</strong>:<br />
+<code>text
+    리노공업 준비된 SSOT와 무손실 원문 발췌본 기반으로 Phase 1~3 심층 추론 작성해줘</code><br />
+<em>(또는 격주 점검일 때는 <code>"리노공업 준비된 SSOT와 원문 발췌본 기반으로 격주 델타 점검해줘"</code> 입력 ➔ Argon이 단 4~6턴 만에 최고 품질로 리포트 완성)</em></li>
+</ul>
 <hr />
 <h2 id="3-github">🔄 3. 분석 완료 후 마무리: 히스토리 기록 및 GitHub 자동 백업</h2>
 <p>분석이나 업데이트 작업이 끝난 후 PC와 구글 드라이브, GitHub 원격 저장소를 동기화할 때는 언제든 아래 한 줄만 입력하시면 됩니다:</p>

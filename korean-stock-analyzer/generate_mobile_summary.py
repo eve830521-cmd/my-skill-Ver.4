@@ -16,7 +16,7 @@ from datetime import datetime
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-STOCK_RESEARCH_DIR = r"e:\antigravity-work\my-skill\Stock_Research"
+STOCK_RESEARCH_DIR = os.environ.get("KSA_STOCK_RESEARCH_ROOT", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Stock_Research"))
 DEFAULT_OUTPUT_LOCAL = os.path.join(STOCK_RESEARCH_DIR, "00_모바일_통합요약본.html")
 DEFAULT_OUTPUT_GDRIVE = r"G:\내 드라이브\01.현탁\01.재테크(G)\02. 보유\00_모바일_통합요약본.html"
 PORTFOLIO_STATUS_PATH = os.path.join(STOCK_RESEARCH_DIR, "portfolio_status.json")
@@ -124,8 +124,8 @@ def extract_opt_valuation_metric(comp_dir: str, p3_text: str) -> str:
             )
             if m_adopt:
                 return m_adopt.group(1).upper()
-        except Exception:
-            pass
+        except Exception as _exc:
+            print(f"[WARN] adopted-option parse failed: {_exc}", file=sys.stderr)
 
     m_p3 = re.search(
         r"1순위\s*지표[^\n*]*?\*\*?(?:Target\s*)?(PBR|PER|EV/EBITDA|배당수익률)\b",
@@ -289,8 +289,8 @@ def extract_company_summary(comp_dir: str, comp_name: str, portfolio_status: dic
                 b2_v = f"{int(float(m_b2.group(1).replace(',', ''))):,}원"
                 b3_v = f"{int(float(m_b3.group(1).replace(',', ''))):,}원"
                 data["buy_prices"] = f"1차 {b1_v} | 2차 {b2_v} | 3차 {b3_v}"
-            except Exception:
-                pass
+            except Exception as _exc:
+                print(f"[WARN] buy_prices parse failed (field left empty): {_exc}", file=sys.stderr)
 
     if data["stop_pin"] == "-":
         m_sp_text = re.search(
@@ -532,8 +532,8 @@ def extract_company_summary(comp_dir: str, comp_name: str, portfolio_status: dic
                         if len(desc_str) > 110:
                             desc_str = desc_str[:110] + "..."
                         data["theses"].append(f"[{date_str}] {clean_md(title_str)}: {clean_md(desc_str)}")
-        except Exception:
-            pass
+        except Exception as _exc:
+            print(f"[WARN] thesis_log parse failed (theses left empty): {_exc}", file=sys.stderr)
 
     return data
 
@@ -1366,13 +1366,14 @@ def build_mobile_html(items: list) -> str:
     return html
 
 
-def main(output_local: str = DEFAULT_OUTPUT_LOCAL):
+def main(output_local: str = DEFAULT_OUTPUT_LOCAL, holding_only: bool = True):
     items = []
     if not os.path.exists(STOCK_RESEARCH_DIR):
         print(f"[Error] Stock_Research 폴더가 존재하지 않습니다: {STOCK_RESEARCH_DIR}")
         return
 
     portfolio_status = load_portfolio_status()
+    p_items = (portfolio_status or {}).get("items", {})
 
     for entry in sorted(os.listdir(STOCK_RESEARCH_DIR)):
         if entry == "Global_Trend":
@@ -1383,23 +1384,41 @@ def main(output_local: str = DEFAULT_OUTPUT_LOCAL):
         p3_file = os.path.join(comp_dir, "3_Final_Reports", "Phase3_DCF.md")
         if not os.path.exists(p3_file):
             continue
+
+        comp_meta = p_items.get(entry, {})
+        comp_status = comp_meta.get("status", "holding")
+
+        # 보유(holding) 한정 일괄 동기화 규칙 적용
+        if holding_only and comp_status != "holding":
+            print(f"[제외] {entry}: 관심(watchlist) 종목 (보유 한정 동기화 정책 적용)")
+            continue
+
         summary = extract_company_summary(comp_dir, entry, portfolio_status)
         items.append(summary)
 
     html_out = build_mobile_html(items)
     with open(output_local, "w", encoding="utf-8") as f:
         f.write(html_out)
-    print(f"[완료] 모바일 통합 요약본 생성: {output_local} (총 {len(items)}개 기업)")
+    filter_label = "보유 종목 한정" if holding_only else "전체 종목"
+    print(f"[완료] 모바일 통합 요약본 생성({filter_label}): {output_local} (총 {len(items)}개 기업)")
 
     gdrive_dir = os.path.dirname(DEFAULT_OUTPUT_GDRIVE)
     if os.path.exists(gdrive_dir) and output_local == DEFAULT_OUTPUT_LOCAL:
         try:
             shutil.copy2(output_local, DEFAULT_OUTPUT_GDRIVE)
-            print(f"[완료] 구글 드라이브 자동 동기화: {DEFAULT_OUTPUT_GDRIVE}")
+            print(f"[완료] 구글 드라이브 일괄 동기화: {DEFAULT_OUTPUT_GDRIVE}")
         except Exception as e:
             print(f"[경고] 구글 드라이브 복사 실패: {e}")
 
 
 if __name__ == "__main__":
-    out_arg = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_OUTPUT_LOCAL
-    main(out_arg)
+    import argparse
+    parser = argparse.ArgumentParser(description="Korean Stock Analyzer Mobile Summary Generator")
+    parser.add_argument("output", nargs="?", default=DEFAULT_OUTPUT_LOCAL, help="출력 HTML 파일 경로")
+    parser.add_argument("--all", action="store_true", help="관심 종목(watchlist) 포함 전체 기업 동기화")
+    parser.add_argument("--holding-only", action="store_true", default=True, help="보유(holding) 기업만 동기화 (기본값)")
+    args = parser.parse_args()
+
+    # --all 플래그가 주어지면 holding_only를 False로 처리
+    use_holding_only = not args.all
+    main(output_local=args.output, holding_only=use_holding_only)

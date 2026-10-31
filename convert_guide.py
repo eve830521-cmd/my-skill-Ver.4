@@ -36,7 +36,7 @@ full_html = f'''<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antigravity 시나리오별 실전 이용방법 & 액션플랜 (v4.2.2)</title>
+    <title>Antigravity 시나리오별 실전 이용방법 & 액션플랜 (v4.3.2)</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
@@ -384,8 +384,8 @@ full_html = f'''<!DOCTYPE html>
         <div class="doc-header">
             <div class="badge-row">
                 <span class="badge badge-primary">Antigravity Guide</span>
-                <span class="badge badge-version">korean-stock-analyzer v4.2.2</span>
-                <span class="badge badge-success">Gemini 4.0 Argon</span>
+                <span class="badge badge-version">korean-stock-analyzer v4.3.2</span>
+                <span class="badge badge-success">Gemini 4.0 Argon & 3.8 Flash High</span>
             </div>
         </div>
         <div class="content">

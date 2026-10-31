@@ -27,6 +27,12 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ssot_common import (  # noqa: E402
+    STOCK_RESEARCH_ROOT, MY_LIST_ROOT, S_CURVE_REGISTRY_PATH,
+    record_warning, reset_warnings, data_quality_summary,
+)
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -409,7 +415,7 @@ def _reconstruct_from_cache_db(db_path, corp_code, stock_code, corp_name):
 
 
 def load_dart_timeseries(
-    stock_code, corp_name=None, stock_name_hint=None, my_list_root=r"e:\antigravity-work\my-stock\my-list"
+    stock_code, corp_name=None, stock_name_hint=None, my_list_root=MY_LIST_ROOT
 ):
     """
     Searches my-list/*/Data.xlsx or cache.db for the stock's DART historical time-series.
@@ -446,8 +452,8 @@ def load_dart_timeseries(
                     if not resolved_stock_code and row[2] and row[2].strip():
                         resolved_stock_code = row[2].strip()
             conn.close()
-        except Exception:
-            pass
+        except Exception as _exc:
+            record_warning('cache.db corp lookup failed (name/code hints may be missing)', _exc, 'warn')
 
     if not resolved_name and stock_name_hint:
         resolved_name = stock_name_hint
@@ -606,21 +612,22 @@ VERIFIED_BOTTLENECK_AND_KGOV_DB = {
         "penetration_pct": 28.5,
         "second_penetration_pct": 11.5,
         "is_near_10pct_inflection": True,
-        "inflection_desc": "TEL 극저온(Cryo) 식각 장비 도입 침투율 ~11.5% (🔥10% 언저리 변곡점, 단 순수 SiC 비중 10.1%는 무상콜옵션)",
+        "inflection_desc": "TEL 극저온(Cryo) 식각 장비 도입 침투율 ~11.5% (🔥10% 언저리 변곡점, 단 기타부품[SiC 등] 10.1%·실리콘음극재 0.0%는 무상콜옵션)",
         "bottleneck_grade": "A",
         "bottleneck_factors": [
-            "생산 Capa: 대구경 단결정 Si 잉곳 성장로(Grower) 및 아산 제2공장 클린룸 Capa",
-            "특허/벤더 Lock-in: Tokyo Electron(TEL) 극저온 식각 챔버용 대구경 Si 일체형 부품 핵심 벤더 Lock-in",
+            "생산 Capa: 대구경 단결정 Si 잉곳 성장로(Grower) 수직계열화 및 아산 제2공장 클린룸 Capa (2Q26 가동률 87.77%)",
+            "기술 격차: 500mm+ 무결점 대구경 단결정 성장 및 극저온(Cryo) 식각 고내플라즈마 정밀가공 (2Q26 OPM 28.88%)",
+            "특허/벤더 Lock-in: 2대주주 Tokyo Electron(TEL, 지분 13.78%) OEM 비포마켓 캡티브 Lock-in 및 SiC 재생/전도성 특허",
         ],
         "bottleneck_lead_time_months": 20,
-        "bottleneck_lead_reason": "대구경 잉곳 그로워 장비 반입 및 TEL 챔버 부품 공정 인증에 18~24개월 소요",
-        "capa_util_pct": 78.0,
-        "payout_ratio_pct": 20.0,
-        "tsr_pct": 20.0,
-        "tax_incentive_status": "⚪ 분리과세 미충족 (아산 신공장 대규모 CapEx 우선 배분)",
+        "bottleneck_lead_reason": "대구경 잉곳 그로워 장비 반입·셋업 및 TEL 챔버 OEM 부품 공정 인증에 18~24개월 소요",
+        "capa_util_pct": 87.8,
+        "payout_ratio_pct": 15.1,
+        "tsr_pct": 27.6,
+        "tax_incentive_status": "⚪ 조특법 분리과세 미충족(배당성향 15.1%)이나, ✅ 26.10.28 임시주총 364.96억(주당 1,892원) 비과세 감액배당(세율 0%) 재원 전입 확정",
         "buyback_cliff_warn": False,
-        "related_party_eok": 12.0,
-        "k_gov_note": "신공장 CapEx 감가상각 반영 필수",
+        "related_party_eok": 17.3,
+        "k_gov_note": "✅ 10.28 비과세 감액배당(365억) & 1,000억 무이자 EB 차입금 상환(자사 희석 0%) vs ⚠️ 베트남 계열사 2억불(자기자본 42.5%) 채무보증·최대주주 담보(472.5만주) 및 702억 음극재 상각비 반영",
         "kgov_mult": 1.00,
     },
     "183300": {  # 코미코
@@ -914,7 +921,9 @@ def _detect_scurve_phase2_status(
             "source_pdf": "Global_Trend 80p+ 심층 리포트 검증",
         })
 
-    reg_path = r"e:\antigravity-work\korean cycle\00_megatrend\docs\s_curve_registry.json"
+    reg_path = S_CURVE_REGISTRY_PATH
+    if not os.path.exists(reg_path):
+        record_warning("s_curve_registry", f"registry not found: {reg_path} (S-Curve auto-detection skipped; set KSA_S_CURVE_REGISTRY)", "degraded")
     if os.path.exists(reg_path):
         try:
             with open(reg_path, "r", encoding="utf-8") as f:
@@ -982,8 +991,8 @@ def _detect_scurve_phase2_status(
                                 "exposure_pct": exp_pct,
                                 "source_pdf": src_pdf,
                             })
-        except Exception:
-            pass
+        except Exception as _exc:
+            record_warning('s_curve_registry.json parse failed (registry themes ignored)', _exc, 'degraded')
 
     verified_global_trend_p2 = {
         "058470": ("온디바이스 AI & NPU 고집적 R&D 리노핀/소켓 (Phase 2 스위트스팟)", 85.0, "26.08.28_신한_생성형AI와 온디바이스AI.pdf & 26.09.16.IM증권.소나기 피할 반도체.pdf"),
@@ -1495,8 +1504,8 @@ def compute_phase1_section8_metrics_ranking(stock_code, bench, df_week, dart_ts,
                     s5_post = s5c[s5c["dt_tmp"] >= rr_dt]
                     if len(s5_post) >= 16:
                         s5c = s5_post.copy()
-            except Exception:
-                pass
+            except Exception as _exc:
+                record_warning('--rerating-date unusable in section8 band calc (date ignored)', _exc, 'degraded')
         bps_scale = 1.0
         if official_bps > 0 and "BPS" in s5c.columns and s5c["BPS"].dropna().shape[0] > 0:
             last_bps = float(s5c["BPS"].dropna().iloc[-1])
@@ -1545,8 +1554,8 @@ def compute_phase1_section8_metrics_ranking(stock_code, bench, df_week, dart_ts,
                     p_diff = np.sign(m_q["close"].diff().dropna())
                     if len(e_diff) > 0:
                         per_dir = round(float((e_diff == p_diff).mean() * 100.0), 1)
-        except Exception:
-            pass
+        except Exception as _exc:
+            record_warning('section8 R2/direction-match calc failed (metric ranking may be incomplete)', _exc, 'degraded')
 
     # Spurious correlation filter & Primary metric selection
     pbr_valid = pbr_dir >= 50.0
@@ -1767,8 +1776,8 @@ def compute_section2_value_trap(stock_code, bench, df_week, dart_ts, curr_price,
                     if len(s5_copy[s5_copy["dt"] >= rr_dt]) >= 16:
                         eff_cutoff = max(cutoff_3y, rr_dt)
                         rerating_applied = True
-                except Exception:
-                    pass
+                except Exception as _exc:
+                    record_warning('--rerating-date unusable in section2 3Y band (date ignored)', _exc, 'degraded')
             s5_3y = s5_copy[s5_copy["dt"] >= eff_cutoff].copy()
         else:
             s5_3y = s5_copy.tail(min(len(s5_copy), 156)).copy()
@@ -1825,8 +1834,8 @@ def compute_section2_value_trap(stock_code, bench, df_week, dart_ts, curr_price,
                 w_post = df_week[df_week["date"] >= rr_dt]
                 if len(w_post) >= 16:
                     w3y = w_post
-            except Exception:
-                pass
+            except Exception as _exc:
+                record_warning('--rerating-date unusable in section2 PBR fallback (date ignored)', _exc, 'degraded')
         pbr_series = w3y["close"] / official_bps
         pbr_3y_max = float(pbr_series.max())
         pbr_3y_mean = float(pbr_series.mean())
@@ -1842,8 +1851,8 @@ def compute_section2_value_trap(stock_code, bench, df_week, dart_ts, curr_price,
                 w_post = df_week[df_week["date"] >= rr_dt]
                 if len(w_post) >= 16:
                     w3y = w_post
-            except Exception:
-                pass
+            except Exception as _exc:
+                record_warning('--rerating-date unusable in section2 PER fallback (date ignored)', _exc, 'degraded')
         per_series = w3y["close"] / official_eps
         per_3y_max = float(per_series.max())
         per_3y_mean = float(per_series.mean())
@@ -2786,8 +2795,8 @@ def export_pipeline_ssot(
             with open(export_json_path, "r", encoding="utf-8") as f:
                 old_data = json.load(f)
                 existing_dcf = old_data.get("reverse_dcf", {})
-        except Exception:
-            pass
+        except Exception as _exc:
+            record_warning('existing valuation_metrics.json unreadable (reverse_dcf block lost; re-run calc_reverse_dcf.py)', _exc, 'degraded')
 
     d_sh = int(distb_shares or existing_dcf.get("distb_shares") or 0)
     t_sh = int(total_shares or existing_dcf.get("total_shares") or d_sh)
@@ -2847,6 +2856,7 @@ def export_pipeline_ssot(
         "section4": sec4_res,
         "reverse_dcf": existing_dcf,
         "canonical_html_tag": canonical_html_tag,
+        "data_quality": data_quality_summary(),
     }
 
     os.makedirs(os.path.dirname(os.path.abspath(export_json_path)), exist_ok=True)
@@ -2962,6 +2972,7 @@ def run_valuation_backtest(
     governance_discount=None,
     anchor_price=None,
 ):
+    reset_warnings()
     print("\n======================================================================")
     print(f"📊 [Korean Stock Analyzer v4.3] 4대 밸류에이션 지표 {years}년 풀사이클 백테스트 & SSOT 엔진")
     print(f"   종목코드: {stock_code} | 분석 기간: 최근 {years}년 | 업종유형: Type {sector_type}")
@@ -3144,7 +3155,7 @@ def run_valuation_backtest(
     # [v4.3 Pipeline SSOT] Export valuation_metrics.json & auto_tables.md
     if not export_json and resolved_corp_name:
         default_sr_dir = os.path.join(
-            r"e:\antigravity-work\my-skill\Stock_Research",
+            STOCK_RESEARCH_ROOT,
             str(resolved_corp_name),
             "2_Translated_DB",
         )

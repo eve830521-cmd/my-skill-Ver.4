@@ -14,6 +14,9 @@ import os
 import json
 import argparse
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ssot_common import record_warning, get_warnings, data_quality_summary  # noqa: E402
+
 
 def calc_dcf_value(fcf, g, wacc, terminal_g, years=5):
     """
@@ -184,6 +187,32 @@ def analyze_reverse_dcf(
     return res
 
 
+def resolve_ctrl_equity(json_path, cli_value):
+    """
+    Single-source rule for controlling equity (book value, in 100M KRW).
+    backtest_valuation.py already stores the DART-derived value as sotp.book_eq_eok. A hand-typed
+    --ctrl-equity with a wrong unit used to inflate non_op_ratio_book_pct (e.g. 3283%) and could flip
+    sotp_triggered, so the SSOT value wins whenever it exists; a >1% disagreement is recorded.
+    """
+    ssot_val = None
+    if json_path and os.path.exists(json_path):
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                ssot_val = (json.load(f).get("sotp") or {}).get("book_eq_eok")
+        except Exception as _exc:
+            record_warning("ctrl_equity_lookup", f"could not read sotp.book_eq_eok: {_exc}", "warn")
+    if ssot_val and float(ssot_val) > 0:
+        ssot_val = float(ssot_val)
+        if cli_value and abs(cli_value / ssot_val - 1.0) > 0.01:
+            record_warning(
+                "ctrl_equity_mismatch",
+                f"--ctrl-equity={cli_value:,.2f} disagrees with SSOT sotp.book_eq_eok={ssot_val:,.2f}; SSOT value used",
+                "warn",
+            )
+        return ssot_val
+    return cli_value
+
+
 def update_ssot_json(json_path, dcf_res):
     """
     [v4.3] Writes or merges Reverse DCF calculation output into the Single Source of Truth JSON file
@@ -197,7 +226,14 @@ def update_ssot_json(json_path, dcf_res):
         try:
             with open(json_path, "r", encoding="utf-8") as f:
                 payload = json.load(f)
-        except Exception:
+        except Exception as _exc:
+            # NEVER overwrite a corrupt SSOT silently: keep a backup and say so.
+            bak = json_path + ".corrupt.bak"
+            try:
+                os.replace(json_path, bak)
+            except OSError:
+                bak = "(backup failed)"
+            record_warning("ssot_json_corrupt", f"{_exc}; original moved to {bak}; backtest_valuation.py must be re-run", "degraded")
             payload = {}
 
     payload["reverse_dcf"] = dcf_res
@@ -229,8 +265,19 @@ def update_ssot_json(json_path, dcf_res):
                 )
                 with open(auto_md_path, "w", encoding="utf-8") as mf:
                     mf.write(md_txt)
-            except Exception:
-                pass
+            except Exception as _exc:
+                record_warning("auto_tables_md_sync", f"auto_tables.md data-fcf tag not synced: {_exc}", "warn")
+
+    if get_warnings():
+        dq = payload.setdefault("data_quality", {"status": "ok", "warnings": []})
+        for w in get_warnings():
+            if w not in dq["warnings"]:
+                dq["warnings"].append(w)
+        dq["status"] = data_quality_summary()["status"] if dq["status"] == "ok" else dq["status"]
+        if any(w["severity"] == "degraded" for w in dq["warnings"]):
+            dq["status"] = "degraded"
+        elif dq["status"] == "ok":
+            dq["status"] = "warn"
 
     os.makedirs(os.path.dirname(os.path.abspath(json_path)), exist_ok=True)
     with open(json_path, "w", encoding="utf-8") as f:
@@ -273,7 +320,7 @@ if __name__ == "__main__":
         norm_fcf_eok=args.norm_fcf,
         non_op_assets_eok=args.non_op_assets,
         non_op_haircut=args.non_op_haircut,
-        controlling_equity_eok=args.ctrl_equity,
+        controlling_equity_eok=resolve_ctrl_equity(args.export_json, args.ctrl_equity),
     )
 
     if args.export_json:

@@ -24,7 +24,7 @@ explicit_ssot = sys.argv[3] if len(sys.argv) >= 4 else None
 
 css_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "report_style.css")
 if not os.path.exists(css_file):
-    css_file = r"e:\antigravity-work\my-skill\korean-stock-analyzer\report_style.css"
+    css_file = os.environ.get("KSA_REPORT_CSS", os.path.join(os.path.dirname(os.path.abspath(__file__)), "report_style.css"))
 
 try:
     with open(md_file, "r", encoding="utf-8") as f:
@@ -130,8 +130,8 @@ for sp in candidate_ssot_paths:
                 ssot_data = json.load(sf)
             ssot_loaded_path = sp
             break
-        except Exception:
-            pass
+        except Exception as _exc:
+            print(f"[WARN] SSOT json unreadable, falling back to markdown numbers: {_exc}", file=sys.stderr)
 
 # Pipeline Integrity Audit: Check if Markdown numbers match SSOT JSON (v4.3 Full 7-Point Verification)
 pipeline_audit_warnings = []
